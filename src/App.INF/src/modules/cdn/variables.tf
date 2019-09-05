@@ -1,4 +1,4 @@
 variable "url" {
-  type = "string"
+  type        = "string"
   description = "The URL of the static website"
 }
