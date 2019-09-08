@@ -58,6 +58,8 @@ resource "aws_cloudfront_distribution" "cloudfront" {
   is_ipv6_enabled     = true
   default_root_object = "index.html"
 
+  aliases = ["${var.url}", "www.${var.url}"]
+
   default_cache_behavior {
     allowed_methods  = ["GET", "HEAD", "OPTIONS"]
     cached_methods   = ["GET", "HEAD"]
@@ -101,7 +103,7 @@ resource "aws_acm_certificate" "spotifydb_cert" {
 }
 
 resource "aws_route53_zone" "spotifydb_hosted_zone" {
-  name = "${var.url}"
+  name = "${var.url}."
 }
 
 resource "aws_route53_record" "spotifydb_cert_record" {
@@ -123,7 +125,7 @@ resource "aws_route53_record" "apex_record" {
   type    = "A"
 
   alias {
-    name                   = "${aws_cloudfront_distribution.cloudfront.domain_name}."
+    name                   = "${aws_cloudfront_distribution.cloudfront.domain_name}"
     zone_id                = "${aws_cloudfront_distribution.cloudfront.hosted_zone_id}"
     evaluate_target_health = false
   }
@@ -135,7 +137,7 @@ resource "aws_route53_record" "www_record" {
   type    = "A"
 
   alias {
-    name                   = "${aws_cloudfront_distribution.cloudfront.domain_name}."
+    name                   = "${aws_cloudfront_distribution.cloudfront.domain_name}"
     zone_id                = "${aws_cloudfront_distribution.cloudfront.hosted_zone_id}"
     evaluate_target_health = false
   }
