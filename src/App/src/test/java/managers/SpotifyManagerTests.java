@@ -9,26 +9,26 @@ public class SpotifyManagerTests {
 
     @Test
     public void nullClientId() {
-        Assertions.assertThrows(IllegalArgumentException.class, () -> new SpotifyManager(null, fakeSecret));
+      Assertions.assertThrows(IllegalArgumentException.class, () -> new SpotifyManager(null, fakeSecret));
     }
 
     @Test
     public void emptyClientId() {
-        Assertions.assertThrows(IllegalArgumentException.class, () -> new SpotifyManager("", fakeSecret));
+      Assertions.assertThrows(IllegalArgumentException.class, () -> new SpotifyManager("", fakeSecret));
     }
 
     @Test
     public void nullClientSecret() {
-        Assertions.assertThrows(IllegalArgumentException.class, () -> new SpotifyManager(fakeId, null));
+      Assertions.assertThrows(IllegalArgumentException.class, () -> new SpotifyManager(fakeId, null));
     }
 
     @Test
     public void emptyClientSecret() {
-        Assertions.assertThrows(IllegalArgumentException.class, () -> new SpotifyManager(fakeId, ""));
+      Assertions.assertThrows(IllegalArgumentException.class, () -> new SpotifyManager(fakeId, ""));
     }
 
     @Test
     public void validCredentials() {
-        Assertions.assertDoesNotThrow(() -> new SpotifyManager(fakeId, fakeSecret));
+      Assertions.assertDoesNotThrow(() -> new SpotifyManager(fakeId, fakeSecret));
     }
 }
