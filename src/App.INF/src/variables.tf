@@ -16,3 +16,13 @@ variable "environment" {
   type        = "string"
   description = "The environment to provision resources for"
 }
+
+variable "dynamo_read_capacity" {
+  type        = "string"
+  description = "The read capacity of the DynamoDB table"
+}
+
+variable "dynamo_write_capacity" {
+  type        = "string"
+  description = "The write capacity of the DynamoDB table"
+}

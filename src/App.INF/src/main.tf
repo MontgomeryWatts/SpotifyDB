@@ -10,7 +10,6 @@ locals {
   aliases    = ["${var.site_url}", "www.${var.site_url}"]
 }
 
-
 module "s3" {
   source = "./modules/s3"
   url    = "${var.site_url}"
@@ -40,8 +39,10 @@ module "cloudfront" {
 
 
 module "dynamodb" {
-  source     = "./modules/dynamodb"
-  table_name = "${local.table_name}"
+  source         = "./modules/dynamodb"
+  table_name     = "${local.table_name}"
+  read_capacity  = "${var.dynamo_read_capacity}"
+  write_capacity = "${var.dynamo_write_capacity}"
 }
 
 module "ssm" {
