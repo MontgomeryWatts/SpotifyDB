@@ -30,11 +30,11 @@ public class SpotifyManager {
         logger.info("Initializing SpotifyManager");
         if (clientId == null || clientId.isEmpty()) {
           logger.error("SpotifyManager passed invalid client ID");
-          throw new IllegalArgumentException("Invalid client ID");
+          throw new IllegalArgumentException();
         }
         if (clientSecret == null || clientSecret.isEmpty()) {
           logger.error("SpotifyManager passed invalid client secret");
-          throw new IllegalArgumentException("Invalid client secret");
+          throw new IllegalArgumentException();
         }
 
         spotifyApi = SpotifyApi.builder()
