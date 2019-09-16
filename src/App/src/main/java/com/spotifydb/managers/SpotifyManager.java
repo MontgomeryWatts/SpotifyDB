@@ -1,4 +1,4 @@
-package managers;
+package com.spotifydb.managers;
 
 import com.wrapper.spotify.SpotifyApi;
 import com.wrapper.spotify.exceptions.SpotifyWebApiException;

@@ -1,4 +1,4 @@
-package repositories.models;
+package com.spotifydb.repositories.models;
 
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 

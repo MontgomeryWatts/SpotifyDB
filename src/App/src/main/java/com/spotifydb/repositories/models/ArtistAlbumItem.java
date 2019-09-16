@@ -1,4 +1,4 @@
-package repositories.models;
+package com.spotifydb.repositories.models;
 
 import com.wrapper.spotify.model_objects.specification.Album;
 import com.wrapper.spotify.model_objects.specification.Artist;

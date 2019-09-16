@@ -1,4 +1,4 @@
-package repositories.models;
+package com.spotifydb.repositories.models;
 
 import com.wrapper.spotify.model_objects.specification.Artist;
 import com.wrapper.spotify.model_objects.specification.Image;
@@ -35,6 +35,9 @@ public class GenreItem extends DynamoItem{
       .build());
     item.put("Uri", AttributeValue.builder()
       .s(artist.getUri())
+      .build());
+    item.put("Id", AttributeValue.builder()
+      .s(artist.getId())
       .build());
 
     List<String> imageUrls = new ArrayList<>();
