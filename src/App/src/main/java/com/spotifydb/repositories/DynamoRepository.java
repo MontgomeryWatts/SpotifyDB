@@ -5,22 +5,23 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import software.amazon.awssdk.auth.credentials.ProfileCredentialsProvider;
 import software.amazon.awssdk.regions.Region;
-import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
+import software.amazon.awssdk.services.dynamodb.DynamoDbAsyncClient;
 import software.amazon.awssdk.services.dynamodb.model.*;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 
 
 public class DynamoRepository {
-  private DynamoDbClient client;
+  private DynamoDbAsyncClient client;
   private String tableName;
   private static Logger logger = LoggerFactory.getLogger(DynamoRepository.class);
 
   public DynamoRepository(String profileName, String tableName){
     logger.info("Initializing DynamoRepository");
     this.tableName = tableName;
-    client = DynamoDbClient.builder()
+    client = DynamoDbAsyncClient.builder()
       .region(Region.US_EAST_1)
       .credentialsProvider(ProfileCredentialsProvider.builder()
         .profileName(profileName)
@@ -44,13 +45,15 @@ public class DynamoRepository {
     }
   }
 
-  public GetItemResponse getArtistById(String artistId) {
+  public CompletableFuture<Map<String, AttributeValue>> getArtistById(String artistId) {
     logger.info("Retrieving an Artist with ID: {}", artistId);
 
     Map<String, AttributeValue> key = new HashMap<>();
+
     key.put("PK", AttributeValue.builder()
       .s("/artists/"+artistId).build());
-    key.put("SK", AttributeValue.builder().s(artistId).build());
+    key.put("SK", AttributeValue.builder()
+      .s(artistId).build());
 
     GetItemRequest request = GetItemRequest.builder()
       .key(key)
@@ -58,36 +61,12 @@ public class DynamoRepository {
       .build();
 
     try {
-      return client.getItem(request);
+      CompletableFuture<GetItemResponse> response = client.getItem(request);
+      return response.thenApplyAsync(GetItemResponse::item);
     } catch (DynamoDbException e) {
       logger.error("Exception throw while retrieving an Artist from DynamoDB");
       logger.error(e.getMessage());
-      return null;
-    }
-  }
-
-  public QueryResponse getArtistItem(String artistId) {
-    logger.info("Retrieving an Artist with ID: {}", artistId);
-
-    Condition partitionCondition = Condition.builder()
-      .comparisonOperator(ComparisonOperator.EQ)
-      .attributeValueList(AttributeValue.builder().s("/artists/"+artistId).build())
-      .build();
-
-    Map<String, Condition> conditions = new HashMap<>();
-    conditions.put("PK", partitionCondition);
-
-    QueryRequest request = QueryRequest.builder()
-      .keyConditions(conditions)
-      .tableName(tableName)
-      .build();
-
-    try {
-      return client.query(request);
-    } catch (DynamoDbException e) {
-      logger.error("Exception throw while retrieving an Artist from DynamoDB");
-      logger.error(e.getMessage());
-      return null;
+      return CompletableFuture.completedFuture(null);
     }
   }
 }
