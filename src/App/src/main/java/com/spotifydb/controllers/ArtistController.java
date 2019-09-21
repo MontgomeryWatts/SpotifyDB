@@ -8,8 +8,10 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
+import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/artists")
@@ -33,7 +35,13 @@ public class ArtistController {
   @Async
   @ResponseBody
   @GetMapping("/{id}/albums")
-  public CompletableFuture<ViewArtistAlbum[]> getArtistAlbumsByArtistId(@PathVariable String id) {
-    return CompletableFuture.completedFuture(null);
+  public CompletableFuture<List<ViewArtistAlbum>> getArtistAlbumsByArtistId(@PathVariable String id) {
+    CompletableFuture<List<Map<String, AttributeValue>>> albumFuture = repo.getArtistAlbumsById(id);
+    List<Map<String,AttributeValue>> albums = albumFuture.join();
+
+    if (albums.isEmpty()) return CompletableFuture.completedFuture(null);
+
+    List<ViewArtistAlbum> viewAlbums = albums.stream().map(ViewArtistAlbum::new).collect(Collectors.toList());
+    return CompletableFuture.completedFuture(viewAlbums);
   }
 }

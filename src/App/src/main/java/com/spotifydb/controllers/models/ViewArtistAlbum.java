@@ -20,4 +20,24 @@ public class ViewArtistAlbum {
     type = artistAlbumItem.get("AlbumType").s();
     images = Utilities.parseImageMapList(artistAlbumItem.get("Images"));
   }
+
+  public String getId() {
+    return id;
+  }
+
+  public String getUri() {
+    return uri;
+  }
+
+  public String getTitle() {
+    return title;
+  }
+
+  public String getType() {
+    return type;
+  }
+
+  public List<Image> getImages() {
+    return images;
+  }
 }

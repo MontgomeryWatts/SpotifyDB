@@ -8,7 +8,9 @@ import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.dynamodb.DynamoDbAsyncClient;
 import software.amazon.awssdk.services.dynamodb.model.*;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
@@ -68,6 +70,37 @@ public class DynamoRepository {
       logger.error("Exception throw while retrieving an Artist from DynamoDB");
       logger.error(e.getMessage());
       return CompletableFuture.completedFuture(new HashMap<>());
+    }
+  }
+
+  public CompletableFuture<List<Map<String, AttributeValue>>> getArtistAlbumsById(String artistId) {
+    logger.info("Retrieving Albums for Artist with ID: {}", artistId);
+
+    String partitionAlias = "#p";
+    String partitionKey = "PK";
+    String partitionKeyValue = "/artists/"+artistId+"/albums";
+
+    Map<String, String> attributeNameAlias = new HashMap<>();
+    attributeNameAlias.put(partitionAlias, partitionKey);
+
+    Map<String, AttributeValue> attributeValue = new HashMap<>();
+    attributeValue.put(":"+partitionKey, AttributeValue.builder()
+      .s(partitionKeyValue).build());
+
+    QueryRequest request = QueryRequest.builder()
+      .keyConditionExpression(partitionAlias + " = :" + partitionKey)
+      .expressionAttributeNames(attributeNameAlias)
+      .expressionAttributeValues(attributeValue)
+      .tableName(tableName)
+      .build();
+
+    try {
+      CompletableFuture<QueryResponse> response = client.query(request);
+      return response.thenApplyAsync(QueryResponse::items);
+    } catch (DynamoDbException e) {
+      logger.error("Exception throw while retrieving an Artist's Albums from DynamoDB");
+      logger.error(e.getMessage());
+      return CompletableFuture.completedFuture(new ArrayList<>());
     }
   }
 }
