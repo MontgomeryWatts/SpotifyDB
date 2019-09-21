@@ -30,7 +30,7 @@ public class DynamoRepository {
     logger.info("Successfully created DynamoRepository");
   }
 
-  public void putDynamoItem(DynamoItem item) {
+  public CompletableFuture<PutItemResponse> putDynamoItem(DynamoItem item) {
     logger.info("Inserting an item into DynamoDB");
     PutItemRequest request = PutItemRequest.builder()
       .tableName(tableName)
@@ -38,10 +38,11 @@ public class DynamoRepository {
       .build();
 
     try {
-      client.putItem(request);
+      return client.putItem(request);
     } catch (DynamoDbException e) {
       logger.error("Exception thrown while inserting an item into DynamoDB");
       logger.error(e.getMessage());
+      return CompletableFuture.completedFuture(null);
     }
   }
 
@@ -66,7 +67,7 @@ public class DynamoRepository {
     } catch (DynamoDbException e) {
       logger.error("Exception throw while retrieving an Artist from DynamoDB");
       logger.error(e.getMessage());
-      return CompletableFuture.completedFuture(null);
+      return CompletableFuture.completedFuture(new HashMap<>());
     }
   }
 }

@@ -116,6 +116,7 @@ public class SpotifyManager {
             GetArtistsAlbumsRequest request = spotifyApi.getArtistsAlbums(artistId)
               .limit(50) // Max number of results allowed for this operation
               .offset(offset)
+              .album_type("album,single")
               .build();
             Paging<AlbumSimplified> albumsPaging = request.execute();
             itemsTotal = albumsPaging.getTotal();

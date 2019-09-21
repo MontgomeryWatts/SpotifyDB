@@ -1,12 +1,10 @@
 package com.spotifydb.repositories.models;
 
 import com.wrapper.spotify.model_objects.specification.Artist;
-import com.wrapper.spotify.model_objects.specification.Image;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class ArtistItem extends DynamoItem {
@@ -37,20 +35,16 @@ public class ArtistItem extends DynamoItem {
       .build());
 
     String[] genres = artist.getGenres();
-
     if (genres.length > 0) {
       item.put("Genres", AttributeValue.builder()
         .ss(genres)
         .build());
     }
 
-    List<String> imageUrls = new ArrayList<>();
-    for(Image image: artist.getImages())
-      imageUrls.add(image.getUrl());
-
-    if (imageUrls.size() > 0) {
+    List<AttributeValue> images = Utilities.createImageMapList(artist.getImages());
+    if (images.size() > 0) {
       item.put("Images", AttributeValue.builder()
-        .ss(imageUrls)
+        .l(images)
         .build());
     }
   }
