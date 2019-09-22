@@ -14,12 +14,12 @@ const router = new VueRouter({
       component: () => import(/* webpackChunkName: "SearchPage" */ '@/components/pages/search/SearchPage')
     },
     {
-      path: '/artists/:artistID',
+      path: '/artists/:artistId',
       component: () => import(/* webpackChunkName: "ArtistPage" */ '@/components/pages/artist/ArtistPage'),
       props: true
     },
     {
-      path: '/albums/:albumID',
+      path: '/albums/:albumId',
       component: () => import(/* webpackChunkName: "AlbumPage" */ '@/components/pages/album/AlbumPage'),
       props: true
     },

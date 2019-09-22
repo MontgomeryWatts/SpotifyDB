@@ -59,7 +59,7 @@ export default {
     }
   },
   props: {
-    albumID: {
+    albumId: {
       type: String,
       required: true
     }
