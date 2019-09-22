@@ -6,5 +6,11 @@ export default {
       method: 'get',
       url: `/api/artists/${id}`
     })
+  },
+  getArtistAlbumsById (id) {
+    return axios({
+      method: 'get',
+      url: `/api/artists/${id}/albums`
+    })
   }
 }

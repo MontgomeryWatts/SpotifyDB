@@ -17,12 +17,23 @@
           >{{ genre }}</b-badge>
         </template>
       </horizontal-card>
+      <b-row>
+        <b-col 
+          cols="4"
+          class="mt-2"
+          v-for="album in albums"
+          :key="album.id"
+        >
+          <artist-album :album="album"/>
+        </b-col>
+      </b-row>
     </b-container>
   </div> 
 </template>
 
 <script>
 import service from '@/services/artist-service';
+import ArtistAlbum from '@/components/pages/artist/ArtistAlbum';
 import HorizontalCard from '@/components/common/HorizontalCard';
 
 export default {
@@ -34,29 +45,45 @@ export default {
       }
   },
   components: {
+    ArtistAlbum,
     HorizontalCard
   },
   data () {
     return {
-      artist: {
-        id: '',
-        name: '',
-        imageUrl: '',
-        genres: []
-      },
+      artist: null,
       albums: [],
       loading: true
     }
   },
   mounted () {
-    this.getArtist();
+    this.loadPage();
+  },
+  async beforeRouteUpdate (to, from, next) {
+    this.artistId = to.params.artistId;
+    await this.loadPage();
+    next();
   },
   methods: {
+    async loadPage () {
+      this.loading = true;
+      this.artist = null;
+      this.albums = [];
+      await this.getArtist();
+      if (this.artist) await this.getArtistAlbums();
+    },
     async getArtist () {
       try {
         let response = await service.getArtistById(this.artistId);
         this.artist = response.data;
         this.loading = false;
+      } catch (e) {
+        throw e;
+      }
+    },
+    async getArtistAlbums () {
+      try {
+        let response = await service.getArtistAlbumsById(this.artistId);
+        this.albums = response.data;
       } catch (e) {
         throw e;
       }
