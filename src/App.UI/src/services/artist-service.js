@@ -12,5 +12,11 @@ export default {
       method: 'get',
       url: `/api/artists/${id}/albums`
     })
+  },
+  getRandomArtistId () {
+    return axios({
+      method: 'get',
+      url: '/api/artists/random'
+    })
   }
 }

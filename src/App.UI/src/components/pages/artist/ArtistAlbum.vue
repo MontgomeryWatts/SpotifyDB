@@ -1,17 +1,17 @@
 <template>
-  <horizontal-card
-    :imageSrc="album.images[0].url"
-    :title="album.title"
+  <top-card
+    :src="album.images[0].url"
+    :footer="album.title"
   />
 </template>
 
 <script>
-import HorizontalCard from '@/components/common/HorizontalCard'
+import TopCard from '@/components/common/TopCard'
 
 export default {
   name: 'ArtistAlbum',
   components: {
-    HorizontalCard
+    TopCard
   },
   props: {
     album: {

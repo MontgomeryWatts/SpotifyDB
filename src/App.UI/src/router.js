@@ -1,5 +1,6 @@
 import Vue from 'vue';
 import VueRouter from 'vue-router';
+import artistService from '@/services/artist-service';
 
 Vue.use(VueRouter);
 
@@ -14,10 +15,18 @@ const router = new VueRouter({
       component: () => import(/* webpackChunkName: "SearchPage" */ '@/components/pages/search/SearchPage')
     },
     {
+      path: '/artists/random', 
+      beforeEnter: async (to, from, next) => { 
+        var response = await artistService.getRandomArtistId();
+        var id = response.data;
+        next(`/artists/${id}`);
+      }
+    },
+    {
       path: '/artists/:artistId',
       component: () => import(/* webpackChunkName: "ArtistPage" */ '@/components/pages/artist/ArtistPage'),
       props: true
-    },
+    }, 
     {
       path: '/albums/:albumId',
       component: () => import(/* webpackChunkName: "AlbumPage" */ '@/components/pages/album/AlbumPage'),

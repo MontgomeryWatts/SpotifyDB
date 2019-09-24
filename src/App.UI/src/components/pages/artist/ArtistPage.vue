@@ -19,8 +19,9 @@
       </horizontal-card>
       <b-row>
         <b-col 
-          cols="4"
-          class="mt-2"
+          xs="12"
+          md="3"
+          class="my-2"
           v-for="album in albums"
           :key="album.id"
         >
