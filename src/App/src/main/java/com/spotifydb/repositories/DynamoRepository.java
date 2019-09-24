@@ -8,10 +8,9 @@ import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.dynamodb.DynamoDbAsyncClient;
 import software.amazon.awssdk.services.dynamodb.model.*;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 
 
@@ -79,6 +78,7 @@ public class DynamoRepository {
     String partitionAlias = "#p";
     String partitionKey = "PK";
     String partitionKeyValue = "/artists/"+artistId+"/albums";
+    String keyConditionExpression = partitionAlias + " = :" + partitionKey;
 
     Map<String, String> attributeNameAlias = new HashMap<>();
     attributeNameAlias.put(partitionAlias, partitionKey);
@@ -88,7 +88,7 @@ public class DynamoRepository {
       .s(partitionKeyValue).build());
 
     QueryRequest request = QueryRequest.builder()
-      .keyConditionExpression(partitionAlias + " = :" + partitionKey)
+      .keyConditionExpression(keyConditionExpression)
       .expressionAttributeNames(attributeNameAlias)
       .expressionAttributeValues(attributeValue)
       .tableName(tableName)
@@ -102,5 +102,51 @@ public class DynamoRepository {
       logger.error(e.getMessage());
       return CompletableFuture.completedFuture(new ArrayList<>());
     }
+  }
+
+  public CompletableFuture<String> getRandomArtistId() {
+    logger.info("Retrieving a random Artist ID from DynamoDB");
+
+
+    String attributeAlias = "#n";
+    String filterExpression = "attribute_exists("+attributeAlias+")";
+
+    Map<String, String> attributeNameAlias = new HashMap<>();
+    attributeNameAlias.put(attributeAlias, "Name");
+
+    Map<String, AttributeValue> startKey = new HashMap<>();
+    List<Map<String, AttributeValue>> items;
+    try {
+      do {
+        String fakeId = createFakeId();
+        startKey.put("PK", AttributeValue.builder()
+          .s("/artists/"+fakeId).build());
+        startKey.put("SK", AttributeValue.builder()
+          .s(fakeId).build());
+
+        ScanRequest request = ScanRequest.builder()
+          .tableName(tableName)
+          .exclusiveStartKey(startKey)
+          .limit(100)
+          .expressionAttributeNames(attributeNameAlias)
+          .filterExpression(filterExpression)
+          .build();
+
+        CompletableFuture<ScanResponse> response = client.scan(request);
+        CompletableFuture<List<Map<String,AttributeValue>>> itemsFuture = response.thenApplyAsync(ScanResponse::items);
+        items = itemsFuture.join();
+      } while (items.isEmpty());
+    } catch (DynamoDbException e) {
+      logger.error("Exception thrown while retrieving a random Artist ID from DynamoDB");
+      return CompletableFuture.completedFuture(null);
+    }
+    String id = items.get(0).get("Id").s();
+    return CompletableFuture.completedFuture(id);
+  }
+
+  private String createFakeId() {
+    String uuid = UUID.randomUUID().toString();
+    String stripped = uuid.replace("-", "");
+    return stripped.substring(0, 22);
   }
 }

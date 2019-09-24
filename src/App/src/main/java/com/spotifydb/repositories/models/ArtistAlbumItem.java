@@ -28,7 +28,7 @@ public class ArtistAlbumItem extends DynamoItem {
       .s("/artists/"+artist.getId()+"/albums")
       .build());
     item.put("SK", AttributeValue.builder()
-      .s(album.getId())
+      .s(album.getAlbumType().getType()+":"+album.getId())
       .build());
     item.put("Id", AttributeValue.builder()
       .s(album.getId())
