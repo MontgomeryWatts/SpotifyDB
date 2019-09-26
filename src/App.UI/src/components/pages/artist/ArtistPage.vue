@@ -6,7 +6,7 @@
     <b-container v-else>
       <horizontal-card
         :title="artist.name"
-        :imageSrc="artist.images[0].url"
+        :imageSrc="artist.images.length > 0 ? artist.images[0].url : ''"
       >
         <template v-slot:content>
          <b-badge
@@ -57,33 +57,33 @@ export default {
     }
   },
   mounted () {
-    this.loadPage();
+    this.loadPage(this.artistId);
   },
   async beforeRouteUpdate (to, from, next) {
-    this.artistId = to.params.artistId;
-    await this.loadPage();
+    await this.loadPage(to.params.artistId);
     next();
   },
   methods: {
-    async loadPage () {
+    async loadPage (artistId) {
       this.loading = true;
       this.artist = null;
       this.albums = [];
-      await this.getArtist();
-      if (this.artist) await this.getArtistAlbums();
+      await this.getArtist(artistId);
+      if (this.artist) await this.getArtistAlbums(artistId);
     },
-    async getArtist () {
+    async getArtist (artistId) {
       try {
-        let response = await service.getArtistById(this.artistId);
+        let response = await service.getArtistById(artistId);
         this.artist = response.data;
-        this.loading = false;
       } catch (e) {
         throw e;
+      } finally {
+        this.loading = false;
       }
     },
-    async getArtistAlbums () {
+    async getArtistAlbums (artistId) {
       try {
-        let response = await service.getArtistAlbumsById(this.artistId);
+        let response = await service.getArtistAlbumsById(artistId);
         this.albums = response.data;
       } catch (e) {
         throw e;
