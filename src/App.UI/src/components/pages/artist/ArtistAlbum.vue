@@ -1,6 +1,7 @@
 <template>
   <top-card
     :src="album.images[0].url"
+    :externalLink="album.uri"
     :footer="album.title"
   />
 </template>

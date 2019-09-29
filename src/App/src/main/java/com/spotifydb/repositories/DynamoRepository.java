@@ -47,6 +47,31 @@ public class DynamoRepository {
     }
   }
 
+  public CompletableFuture<Map<String, AttributeValue>> getAlbumById(String albumId) {
+    logger.info("Retrieving an Album with ID: {}", albumId);
+
+    Map<String, AttributeValue> key = new HashMap<>();
+
+    key.put("PK", AttributeValue.builder()
+      .s("/albums/"+albumId).build());
+    key.put("SK", AttributeValue.builder()
+      .s(albumId).build());
+
+    GetItemRequest request = GetItemRequest.builder()
+      .key(key)
+      .tableName(tableName)
+      .build();
+
+    try {
+      CompletableFuture<GetItemResponse> response = client.getItem(request);
+      return response.thenApplyAsync(GetItemResponse::item);
+    } catch (DynamoDbException e) {
+      logger.error("Exception throw while retrieving an Album from DynamoDB");
+      logger.error(e.getMessage());
+      return CompletableFuture.completedFuture(new HashMap<>());
+    }
+  }
+
   public CompletableFuture<Map<String, AttributeValue>> getArtistById(String artistId) {
     logger.info("Retrieving an Artist with ID: {}", artistId);
 
@@ -108,11 +133,13 @@ public class DynamoRepository {
     logger.info("Retrieving a random Artist ID from DynamoDB");
 
 
-    String attributeAlias = "#n";
-    String filterExpression = "attribute_exists("+attributeAlias+")";
+    String nameAlias = "#n";
+    String imageAlias = "#i";
+    String filterExpression = "attribute_exists("+nameAlias+") and attribute_exists("+imageAlias+")";
 
     Map<String, String> attributeNameAlias = new HashMap<>();
-    attributeNameAlias.put(attributeAlias, "Name");
+    attributeNameAlias.put(nameAlias, "Name");
+    attributeNameAlias.put(imageAlias, "Images");
 
     Map<String, AttributeValue> startKey = new HashMap<>();
     List<Map<String, AttributeValue>> items;

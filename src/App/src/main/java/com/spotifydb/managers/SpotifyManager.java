@@ -106,7 +106,7 @@ public class SpotifyManager {
         return artists.toArray(new Artist[0]);
     }
 
-    public String[] getAllArtistAlbumIds(String artistId) {
+    private String[] getAllArtistAlbumIds(String artistId) {
         logger.info("Retrieving album IDs for Artist with ID: {}", artistId);
         List<String> albumIds = new ArrayList<>();
         int offset = 0;
@@ -135,8 +135,9 @@ public class SpotifyManager {
         return albumIds.toArray(new String[0]);
     }
 
-    public Album[] getAlbumsByIds(String[] albumIds) {
+    public Album[] getAlbumsByArtistId(String artistId) {
         logger.info("Retrieving Albums by IDs");
+        String[] albumIds = getAllArtistAlbumIds(artistId);
         List<Album> albums = new ArrayList<>();
         int startIndex = 0;
         int endIndex = albumIds.length < 20 ? albumIds.length : 20;
