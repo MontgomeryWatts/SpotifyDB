@@ -4,6 +4,7 @@ import com.spotifydb.controllers.models.ViewAlbum;
 import com.spotifydb.repositories.DynamoRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -24,15 +25,15 @@ public class AlbumController {
   @Async
   @ResponseBody
   @GetMapping("/{id}")
-  public CompletableFuture<ViewAlbum> getAlbumById(@PathVariable String id){
+  public CompletableFuture<ResponseEntity<ViewAlbum>> getAlbumById(@PathVariable String id){
     logger.info("GET request received at /albums/{}", id);
 
     CompletableFuture<Map<String, AttributeValue>> future = repo.getAlbumById(id);
     Map<String, AttributeValue> item = future.join();
 
-    if (item.isEmpty()) return CompletableFuture.completedFuture(null);
+    if (item.isEmpty()) return CompletableFuture.completedFuture(ResponseEntity.notFound().build());
 
     ViewAlbum album = new ViewAlbum(item);
-    return CompletableFuture.completedFuture(album);
+    return CompletableFuture.completedFuture(ResponseEntity.ok(album));
   }
 }
