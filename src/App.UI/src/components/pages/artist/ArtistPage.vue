@@ -76,7 +76,9 @@ export default {
         let response = await service.getArtistById(artistId);
         this.artist = response.data;
       } catch (e) {
-        throw e;
+        if (e.response.status === 404) {
+          this.$router.push('/404');
+        }
       } finally {
         this.loading = false;
       }

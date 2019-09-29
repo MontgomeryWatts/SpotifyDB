@@ -39,6 +39,14 @@ const router = new VueRouter({
     {
       path: '/playlist',
       component: () => import(/* webpackChunkName: "CreatePlaylistPage" */ '@/components/pages/playlist/CreatePlaylistPage')
+    },
+    {
+      path: '/404',
+      component: () => import(/* webpackChunkName: "404" */ '@/components/pages/error/NotFound')
+    },
+    {
+      path: '*',
+      component: () => import(/* webpackChunkName: "404" */ '@/components/pages/error/NotFound')
     }
   ]
 });

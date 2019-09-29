@@ -13,9 +13,9 @@
         <b-list-group-item v-for="(track, index) in album.tracks" :key="track.uri">
           <span class="float-left">{{ index + 1 }}</span>
           <b-link :href="track.uri">
-            {{ track.name }}
+            {{ track.title }}
           </b-link>
-          <span class="float-right">{{ track.durationMs | durationString }} </span>
+          <span class="float-right">{{ track.duration | durationString }} </span>
         </b-list-group-item>
       </b-list-group>
     </b-container>
@@ -62,7 +62,9 @@ export default {
         let response = await service.getAlbumById(albumId);
         this.album = response.data;
       } catch (e) {
-        throw e;
+        if (e.response.status === 404) {
+          this.$router.push('/404');
+        }
       } finally {
         this.loading = false;
       }

@@ -8,14 +8,15 @@ import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class ViewAlbum {
   private final String id;
   private final String uri;
   private final String title;
   private final List<Image> images;
-  private final List<ArtistSimplified> artists;
-  private final List<TrackSimplified> tracks;
+  private final List<ViewAlbumArtist> artists;
+  private final List<ViewAlbumTrack> tracks;
 
   public ViewAlbum(Map<String, AttributeValue> albumItem) {
     id = albumItem.get("Id").s();
@@ -26,31 +27,12 @@ public class ViewAlbum {
     images = Utilities.parseImageMapList(albumItem.get("Images"));
   }
 
-  private List<ArtistSimplified> extractArtists(List<AttributeValue> artistList) {
-    List<ArtistSimplified> extractedArtists = new ArrayList<>();
-    for (AttributeValue artist : artistList) {
-      Map<String, AttributeValue> item = artist.m();
-      extractedArtists.add(new ArtistSimplified.Builder()
-      .setName(item.get("Name").s())
-      .setId(item.get("Id").s())
-      .build());
-    }
-    return extractedArtists;
+  private List<ViewAlbumArtist> extractArtists(List<AttributeValue> artistList) {
+    return artistList.stream().map(AttributeValue::m).map(ViewAlbumArtist::new).collect(Collectors.toList());
   }
 
-  private List<TrackSimplified> extractTracks(List<AttributeValue> trackList) {
-    List<TrackSimplified> extractedTracks = new ArrayList<>();
-    for (AttributeValue track : trackList) {
-      Map<String, AttributeValue> item = track.m();
-      extractedTracks.add(new TrackSimplified.Builder()
-        .setName(item.get("Title").s())
-        .setUri(item.get("Uri").s())
-        .setExplicit(item.get("IsExplicit").bool())
-        .setDurationMs(Integer.parseInt(item.get("Duration").n()))
-        .setArtists(extractArtists(item.get("Artists").l()).toArray(new ArtistSimplified[0]))
-        .build());
-    }
-    return extractedTracks;
+  private List<ViewAlbumTrack> extractTracks(List<AttributeValue> trackList) {
+    return trackList.stream().map(AttributeValue::m).map(ViewAlbumTrack::new).collect(Collectors.toList());
   }
 
   public String getId() {
@@ -69,11 +51,11 @@ public class ViewAlbum {
     return images;
   }
 
-  public List<ArtistSimplified> getArtists() {
+  public List<ViewAlbumArtist> getArtists() {
     return artists;
   }
 
-  public List<TrackSimplified> getTracks() {
+  public List<ViewAlbumTrack> getTracks() {
     return tracks;
   }
 }

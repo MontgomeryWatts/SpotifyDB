@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
 @Controller
 @RequestMapping("/artists")
 public class ArtistController {
-  
+
   private DynamoRepository repo;
   private static Logger logger = LoggerFactory.getLogger(ArtistController.class);
 
