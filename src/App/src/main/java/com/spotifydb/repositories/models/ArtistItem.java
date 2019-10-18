@@ -35,7 +35,7 @@ public class ArtistItem extends DynamoItem {
       .build());
 
     String[] genres = artist.getGenres();
-    if (genres.length > 0) {
+    if (genres != null && genres.length > 0) {
       item.put("Genres", AttributeValue.builder()
         .ss(genres)
         .build());

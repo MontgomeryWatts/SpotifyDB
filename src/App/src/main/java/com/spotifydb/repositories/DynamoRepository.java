@@ -3,25 +3,26 @@ package com.spotifydb.repositories;
 import com.spotifydb.repositories.models.DynamoItem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Repository;
 import software.amazon.awssdk.auth.credentials.ProfileCredentialsProvider;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.dynamodb.DynamoDbAsyncClient;
 import software.amazon.awssdk.services.dynamodb.model.*;
 
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 
-
+@Repository
 public class DynamoRepository {
   private DynamoDbAsyncClient client;
-  private String tableName;
   private static Logger logger = LoggerFactory.getLogger(DynamoRepository.class);
+  private String tableName;
+  private String profileName;
 
-  public DynamoRepository(String profileName, String tableName){
+  public DynamoRepository(){
     logger.info("Initializing DynamoRepository");
-    this.tableName = tableName;
+    profileName = System.getenv("PROFILE_NAME");
+    tableName = System.getenv("DYNAMODB_TABLE");
     client = DynamoDbAsyncClient.builder()
       .region(Region.US_EAST_1)
       .credentialsProvider(ProfileCredentialsProvider.builder()

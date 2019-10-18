@@ -5,6 +5,7 @@ import com.spotifydb.controllers.models.ViewArtistAlbum;
 import com.spotifydb.repositories.DynamoRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Controller;
@@ -20,6 +21,7 @@ import java.util.stream.Collectors;
 @RequestMapping("/artists")
 public class ArtistController {
 
+  @Autowired
   private DynamoRepository repo;
   private static Logger logger = LoggerFactory.getLogger(ArtistController.class);
 
